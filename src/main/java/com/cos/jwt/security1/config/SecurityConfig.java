@@ -1,7 +1,9 @@
 package com.cos.jwt.security1.config;
 
+import com.cos.jwt.security1.Repository.UserRepository;
 import com.cos.jwt.security1.config.filter.MyFilter3;
 import com.cos.jwt.security1.config.jwtConfig.JwtAuthenticationFilter;
+import com.cos.jwt.security1.config.jwtConfig.JwtAuthorizationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -28,6 +30,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private final CorsFilter corsFilter;
 
+    private final UserRepository userRepository;
     /**
      * password 암호화
      * @return
@@ -45,7 +48,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         // Spring Security 기본 로그인 및 OAuth2를 사용하기 위해서는 아래의 설정 주석 처리 필요
         ///*
 
-        http.addFilterBefore(new MyFilter3(), BasicAuthenticationFilter.class);     // BasicAuthenticationFilter 이전에 MyFilter3을 추가하겠다.
+        //http.addFilterBefore(new MyFilter3(), BasicAuthenticationFilter.class);     // BasicAuthenticationFilter 이전에 MyFilter3을 추가하겠다.
         // 시큐리티 필터가 커스텀 필터보다 먼저 실행됨
 
         // 커스텀 필터를 시큐리티 필터보다 먼저 실행시키는 방법
@@ -58,6 +61,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         .formLogin().disable()              // Spring Security 로그인 사용 X
                         .httpBasic().disable()              // http를 제외한 다른 방식(js로 요청 등)을 허용하겠다.
                         .addFilter(new JwtAuthenticationFilter(authenticationManager()))       // JWtAuthenticationFilter 추가. (로그인 기능을 비활성화해서 로그인 기능을 가진 커스텀 필터를 직접 넣어줌), authenticationManager()은 WebSecurityConfigurerAdapter이 가지고 있음
+                        .addFilter(new JwtAuthorizationFilter(authenticationManager(), userRepository))       // JwtAuthorizationFilter 추가. (권한이나 인증이 필요한 주소 요청 시의 필터)
                         .authorizeRequests()
                         .antMatchers("/api/v1/user/**")
                         .access("hasRole('ROLE_USER') or hasRole('ROLE_MANAGER') or hasRole('ROLE_ADMIN')")

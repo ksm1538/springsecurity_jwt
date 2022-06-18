@@ -87,16 +87,14 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     // JWT 토큰을 만들어서 request 요청한 사용자에게 JWT 토큰을 주면 된다.
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
-        System.out.println("successfulAuthetication 실행 : 인증 완료란 뜻");
         PrincipalDetails principalDetails = (PrincipalDetails) authResult.getPrincipal();
-
         // JWT 토큰 만들기
         // RSA 방식이 아닌, Hash암호방식 (최근 이 방식을 더 많이 사용한다고 함)
         String jwtToken  = JWT.create()
                 .withSubject("토큰 제목")       // 토큰 제목
                 .withExpiresAt(new Date(System.currentTimeMillis()+(60000*10)))      // 토큰 만료시간 ms 기준 60초 * 10 (10분)
-                .withClaim("id", principalDetails.getUser().getUsername())
-                .withClaim("username", principalDetails.getUser().getPassword())
+                .withClaim("id", principalDetails.getUser().getId())
+                .withClaim("username", principalDetails.getUser().getUsername())
                 .sign(Algorithm.HMAC512("cos"));
 
         response.addHeader("Authentication", "Bearer " + jwtToken);

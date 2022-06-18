@@ -26,21 +26,15 @@ public class User {
     private String email;
     private String role;
 
-    // OAuth2 구분자
-    private String provider;
-    private String providerId;
-
     @CreationTimestamp
     private Timestamp createDate;
 
     @Builder
-    public User(String username, String password, String email, String role, String provider, String providerId, Timestamp createDate) {
+    public User(String username, String password, String email, String role, Timestamp createDate) {
         this.username = username;
         this.password = password;
         this.email = email;
         this.role = role;
-        this.provider = provider;
-        this.providerId = providerId;
         this.createDate = createDate;
     }
 
