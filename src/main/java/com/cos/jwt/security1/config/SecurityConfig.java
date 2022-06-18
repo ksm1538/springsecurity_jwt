@@ -1,7 +1,7 @@
 package com.cos.jwt.security1.config;
 
 import com.cos.jwt.security1.config.filter.MyFilter3;
-import com.cos.jwt.security1.config.jwt.JwtAuthenticationFilter;
+import com.cos.jwt.security1.config.jwtConfig.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -15,9 +15,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.web.filter.CorsFilter;
 
-
-// 구글 로그인 과정
-// 1. 코드받기(인증) 2. 액세스토큰(권한) 3. 사용자 프로필정보 가져오기 4. 그 정보를 토대로 회원가입 진행
 
 @Configuration
 @EnableWebSecurity      // spring security filter가 Spring filter chain 에 등록

@@ -31,7 +31,7 @@ public class PrincipalDetailsJwtService implements UserDetailsService {
         // 4. JWT 토큰을 만들고 응답
 
         User userEntity = userRepository.findByUsername(username);
-        System.out.println("씨빨" + userEntity.toString());
+        System.out.println("찾은 UserEntity : " + userEntity.toString());
         PrincipalDetails p = new PrincipalDetails(userEntity);
 
         return p;

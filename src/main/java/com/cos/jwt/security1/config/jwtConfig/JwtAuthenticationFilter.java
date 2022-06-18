@@ -1,6 +1,8 @@
-package com.cos.jwt.security1.config.jwt;
+package com.cos.jwt.security1.config.jwtConfig;
 
 
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.algorithms.Algorithm;
 import com.cos.jwt.security1.config.jwtAuth.PrincipalDetails;
 import com.cos.jwt.security1.model.User;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -16,6 +18,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Date;
 
 // spring security에서 UsernamePasswordAuthenticationFilter 가 있는데
 // login 요청 시, username, pw 전송 시, UsernamePasswordAuthenticationFilter가 동작함
@@ -85,6 +88,17 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
         System.out.println("successfulAuthetication 실행 : 인증 완료란 뜻");
-        super.successfulAuthentication(request, response, chain, authResult);
+        PrincipalDetails principalDetails = (PrincipalDetails) authResult.getPrincipal();
+
+        // JWT 토큰 만들기
+        // RSA 방식이 아닌, Hash암호방식 (최근 이 방식을 더 많이 사용한다고 함)
+        String jwtToken  = JWT.create()
+                .withSubject("토큰 제목")       // 토큰 제목
+                .withExpiresAt(new Date(System.currentTimeMillis()+(60000*10)))      // 토큰 만료시간 ms 기준 60초 * 10 (10분)
+                .withClaim("id", principalDetails.getUser().getUsername())
+                .withClaim("username", principalDetails.getUser().getPassword())
+                .sign(Algorithm.HMAC512("cos"));
+
+        response.addHeader("Authentication", "Bearer " + jwtToken);
     }
 }
